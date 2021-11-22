@@ -27,7 +27,7 @@ export const BoardEditItem = () => {
   }, [currentBoard])
 
   const handleOnClick = () => {
-    history.push('/board/edit')
+    history.push('/edit')
   }
 
   const handleOnSave = () => {
@@ -37,7 +37,7 @@ export const BoardEditItem = () => {
       content: 'Be careful, this action will replace configuration of this board !',
       onOk: () => {
         dispatch(actions.dataUpdate(board))
-        history.push('/board/edit')
+        history.push('/edit')
       }
     });
   }

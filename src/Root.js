@@ -3,9 +3,9 @@ import { Switch, Route, useHistory, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Layout, Menu } from 'antd';
 import {
-  DashboardOutlined,
+  EditOutlined,
   ShareAltOutlined,
-  WifiOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 
 import { BoardEditItem } from './components/BoardEditItem'
@@ -43,6 +43,13 @@ export const Root = () => {
     return location.search === '?standalone'
   }, [location.search])
 
+  const selectedProcess = useMemo(() => {
+    if (selected.includes('edit/')) {
+      return 'edit'
+    }
+    return selected;
+  }, [selected])
+
   const onCollapse = () => {
     setCollapsed(!collapsed)
   }
@@ -79,11 +86,11 @@ export const Root = () => {
               <img className="img" src={EvntBoardLogo}  alt='' />
               {!collapsed && <div className="title">Board</div>}
             </div>
-            <Menu theme={'dark'} selectedKeys={[selected]} mode="inline">
-              <Menu.Item key="view" icon={<WifiOutlined />} onClick={handleOnClickMenu}>
+            <Menu theme={'dark'} selectedKeys={[selectedProcess]} mode="inline">
+              <Menu.Item key="view" icon={<AppstoreOutlined />} onClick={handleOnClickMenu}>
                 Mode View
               </Menu.Item>
-              <Menu.Item key="edit" icon={<DashboardOutlined />} onClick={handleOnClickMenu}>
+              <Menu.Item key="edit" icon={<EditOutlined />} onClick={handleOnClickMenu}>
                 Mode Edit
               </Menu.Item>
               <Menu.Item key="standalone" icon={<ShareAltOutlined />} onClick={handleOnClickMenu}>
