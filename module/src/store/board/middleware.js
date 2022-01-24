@@ -1,4 +1,4 @@
-import { EvntComWebSocket } from 'evntcom-js/dist/web';
+import EvntCom from '@evntboard/evntcom-browser';
 
 import { actions } from "./";
 
@@ -13,7 +13,7 @@ const middleware = (store) => (next) => (action) => {
     case actions.wsConnect.type:
       // Configure the object
       try {
-        websocket = new EvntComWebSocket({
+        websocket = new EvntCom({
           port: isDev ? 5000 : window.location.port,
           host: window.location.hostname,
           events: [

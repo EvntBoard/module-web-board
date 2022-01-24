@@ -15,13 +15,12 @@ import useLocalStorage from "./hooks/useLocalStorage";
 import { actions } from './store/board'
 import EvntBoardLogo from "./assets/logo.png";
 
-const { Content, Sider } = Layout;
+const { Content, Header } = Layout;
 
 export const Root = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch()
-  const [ collapsed , setCollapsed ] = useLocalStorage('collapsed', false)
   const [ selected, setSelected ] = useLocalStorage('menu', 'view');
 
   useEffect(() => {
@@ -50,10 +49,6 @@ export const Root = () => {
     return selected;
   }, [selected])
 
-  const onCollapse = () => {
-    setCollapsed(!collapsed)
-  }
-
   const handleOnClickMenu = ({ key }) => {
     if (key === 'standalone') {
       const win = window.open(`/modules/module-board/#/?standalone`, "_blank")
@@ -68,25 +63,15 @@ export const Root = () => {
   }
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ height: '100vh' }}>
       {
         !hideLayout && (
-          <Sider
-            collapsible
-            collapsed={collapsed}
-            onCollapse={onCollapse}
-            style={{
-              overflow: 'auto',
-              height: '100vh',
-              position: 'fixed',
-              left: 0,
-            }}
-          >
+          <Header style={{ display: 'flex' }}>
             <div className="logo">
               <img className="img" src={EvntBoardLogo}  alt='' />
-              {!collapsed && <div className="title">Board</div>}
+              <div className="title">Board</div>
             </div>
-            <Menu theme={'dark'} selectedKeys={[selectedProcess]} mode="inline">
+            <Menu theme={'dark'} selectedKeys={[selectedProcess]} mode="horizontal">
               <Menu.Item key="view" icon={<AppstoreOutlined />} onClick={handleOnClickMenu}>
                 Mode View
               </Menu.Item>
@@ -97,24 +82,22 @@ export const Root = () => {
                 Mode Standalone
               </Menu.Item>
             </Menu>
-          </Sider>
+          </Header>
         )
       }
-      <Layout className="site-layout" style={!hideLayout ? collapsed ? { marginLeft: 80 } : { marginLeft: 200 } : null}>
-        <Content className='board'>
-          <Switch>
-            <Route exact path="/edit">
-              <BoardEdit />
-            </Route>
-            <Route path="/edit/:boardId">
-              <BoardEditItem />
-            </Route>
-            <Route path="/">
-              <BoardView />
-            </Route>
-          </Switch>
-        </Content>
-      </Layout>
+      <Content className='board'>
+        <Switch>
+          <Route exact path="/edit">
+            <BoardEdit />
+          </Route>
+          <Route path="/edit/:boardId">
+            <BoardEditItem />
+          </Route>
+          <Route path="/">
+            <BoardView />
+          </Route>
+        </Switch>
+      </Content>
     </Layout>
   )
 };
