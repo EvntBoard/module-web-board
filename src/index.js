@@ -8,7 +8,7 @@ import { Root } from "./Root";
 import reportWebVitals from "./reportWebVitals";
 import store from "./store";
 
-import './App.less';
+import './antd.css';
 import './style.scss';
 
 ReactDOM.render(

@@ -2,35 +2,36 @@
   "name": "module-board",
   "version": "0.0.1",
   "private": true,
-  "homepage": "/modules/module-board/",
+  "homepage": ".",
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
-    "@evntboard/evntcom-browser": "https://github.com/EvntBoard/evntcom-browser.git",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.13",
-    "axios": "^0.23.0",
+    "axios": "^0.26.1",
     "date-fns": "^2.25.0",
     "final-form": "^4.20.4",
     "grid-template-parser": "^0.3.2",
     "history": "^5.0.0",
+    "json-rpc-2.0": "^1.1.0",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.1",
     "react-final-form": "^6.5.7",
     "react-helmet": "^6.1.0",
+    "react-icons": "^4.3.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -51,8 +52,6 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^6.3.0",
-    "craco-less": "^1.20.0",
     "http-proxy-middleware": "^1.0.6",
     "sass": "^1.37.0"
   }
