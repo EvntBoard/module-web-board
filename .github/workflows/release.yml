@@ -53,6 +53,6 @@ jobs:
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.zip
-          path: ./${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.zip
+          name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}
+          path: ./build
           retention-days: 1
