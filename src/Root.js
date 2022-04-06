@@ -51,7 +51,7 @@ export const Root = () => {
 
   const handleOnClickMenu = ({ key }) => {
     if (key === 'standalone') {
-      const win = window.open(`/modules/module-board/#/?standalone`, "_blank")
+      const win = window.open(`${window.location.href.replace(window.location.hash)}#/?standalone`, "_blank")
       win.focus();
     } else {
       if (key === 'view') {
