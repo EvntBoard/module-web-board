@@ -2,61 +2,66 @@
  {
   "id": "1bdcc133-da3b-4797-b755-540d237d1eeb",
   "name": "/board/_constant",
-  "enable": true,
-  "code": "const EVNTBOARD_CACHE_FILENAME = \"/board/data.json\"\n\nconst EVNTBOARD_SAMPLE_BOARD = {\n  id: null,\n  name: '',\n  slug: '',\n  description: '',\n  default: false,\n  image: null,\n  color: null,\n  width: 5,\n  height: 5,\n  layout: []\n}\n\nconst EVNTBOARD_SAMPLE_BUTTON = {\n  id: null,\n  slug: null,\n  type: 'text',\n  text: null,\n  image: null,\n  color: null,\n  column_start: null,\n  column_end: null,\n  row_start: null,\n  row_end: null,\n}",
-  "codeError": null,
-  "entity": "shared"
- },
- {
-  "id": "e469ee39-83b8-42f3-a752-fdb27bc73ed0",
-  "name": "/board/_fnc",
-  "enable": true,
-  "code": "const updateBtn = (btnSlug, payload = {}) => {\n  newEvent({\n    idParent: event.id,\n    name: 'evntboard-tmp',\n    payload: {\n      slug: btnSlug,\n      ...payload\n    },\n  })\n}",
+  "enable": 1,
+  "code": "const EVNTBOARD_JSON_FILENAME = \"board\"\nconst EVNTBOARD_JSON_KEY = \"default\"\nconst EVNTBOARD_CACHE = \"board-cache\"\n\nconst EVNTBOARD_SAMPLE_BOARD = {\n  id: null,\n  name: '',\n  slug: '',\n  description: '',\n  default: false,\n  image: null,\n  color: null,\n  width: 5,\n  height: 5,\n  layout: []\n}\n\nconst EVNTBOARD_SAMPLE_BUTTON = {\n  id: null,\n  slug: null,\n  type: 'text',\n  text: null,\n  image: null,\n  color: null,\n  column_start: null,\n  column_end: null,\n  row_start: null,\n  row_end: null,\n}\n\nconst getEvntBoardData = () => jsonFile.get(EVNTBOARD_JSON_KEY, EVNTBOARD_JSON_FILENAME)\nconst setEvntBoardData = (data) => jsonFile.set(EVNTBOARD_JSON_KEY, data, EVNTBOARD_JSON_FILENAME)\n\nconst getEvntBoardTmpData = () => temp.get(EVNTBOARD_CACHE)\nconst setEvntBoardTmpData = (data) => temp.set(EVNTBOARD_CACHE, data)\n\n// This is how to update btn dynamicaly\n// newEvent({\n//   idParent: event.id,\n//   name: 'evntboard-tmp',\n//   payload: {\n//     slug: btnSlug,\n//   },\n// })",
   "codeError": null,
   "entity": "shared"
  },
  {
   "id": "274f4c5d-8ccb-42ca-b951-abe9ffb4943c",
   "name": "/board/_system",
-  "enable": true,
+  "enable": 1,
   "type": "queue",
-  "code": "// i don't use shared script cause this is used in single place\nconst eventName = event.name\nconst payload = event.payload\nconst emitter = event.emitter\n\nswitch (eventName) {\n    case \"evntboard-start\": {\n      let newData = file.read(EVNTBOARD_CACHE_FILENAME)\n      let tmpData = temp.get(\"evntboard-cache\")\n\n      if (!newData) {\n        newData = []\n        newData.push({\n          ...EVNTBOARD_SAMPLE_BOARD,\n          id: 'first-board',\n          name: 'First Board',\n          default: true,\n          layout: [\n            {\n              ...EVNTBOARD_SAMPLE_BUTTON,\n              id: 'first-btn',\n              slug: \"fart-btn\",\n              type: \"button\",\n              color: \"rgb(114,7,137)\",\n              text: \"Click me\",\n              column_start: 1,\n              column_end: 2,\n              row_start: 1,\n              row_end: 2,\n            }\n          ]\n        })\n        file.write(EVNTBOARD_CACHE_FILENAME, JSON.stringify(newData,  0, 2))\n      } else {\n        newData = JSON.parse(newData)\n      }\n\n      if (!tmpData) {\n        temp.set(\"evntboard-cache\", [])\n        tmpData = temp.get(\"evntboard-cache\")\n      }\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-init',\n        payload: newData,\n        emitter\n      })\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-init-tmp',\n        payload: tmpData,\n        emitter\n      })\n      break;\n    }\n\n      // BOARD\n    case \"evntboard-create\": {\n      let data = JSON.parse(file.read(EVNTBOARD_CACHE_FILENAME))\n\n      const newData = [\n        ...data,\n        {\n          ...SAMPLE_BOARD,\n          ...payload,\n        }\n      ]\n\n      file.write(EVNTBOARD_CACHE_FILENAME, JSON.stringify(newData,  0, 2))\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch',\n        payload: newData,\n        emitter\n      })\n      break;\n    }\n    case \"evntboard-update\": {\n      let data = JSON.parse(file.read(EVNTBOARD_CACHE_FILENAME))\n\n      const newData = [\n        ...data.filter((i) => i.id !== payload.id),\n        {\n          ...EVNTBOARD_SAMPLE_BOARD, // au cas ou !\n          ...payload\n        }\n      ]\n\n      file.write(EVNTBOARD_CACHE_FILENAME, JSON.stringify(newData,  0, 2))\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch',\n        payload: newData,\n        emitter\n      })\n      break;\n    }\n    case \"evntboard-delete\": {\n      let data = JSON.parse(file.read(EVNTBOARD_CACHE_FILENAME))\n\n      const newData = data.filter((i) => i.id !== payload.id)\n\n      file.write(EVNTBOARD_CACHE_FILENAME, JSON.stringify(newData,  0, 2))\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch',\n        payload: newData,\n        emitter\n      })\n      break;\n    }\n    case \"evntboard-tmp\": {\n      let evntboardCache = temp.get(\"evntboard-cache\")\n      if (!evntboardCache) {\n        evntboardCache = []\n        evntboardCache.push(payload)\n      } else {\n        evntboardCache = [\n          ...evntboardCache.filter((i) => i.slug !== payload.slug ),\n          {\n            ...evntboardCache.find((i) => i.slug === payload.slug),\n            ...payload\n          }\n        ]\n      }\n      temp.set(\"evntboard-cache\", evntboardCache)\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch-tmp',\n        payload: evntboardCache,\n        emitter\n      })\n    }\n  }",
-  "codeError": null,
   "locker": null,
+  "code": "switch (event.name) {\n    case \"evntboard-start\": {\n      let newData = getEvntBoardData()\n      let tmpData = getEvntBoardTmpData()\n\n      if (!newData) {\n        newData = setEvntBoardData([{\n          ...EVNTBOARD_SAMPLE_BOARD,\n          id: 'first-board',\n          name: 'First Board',\n          default: true,\n          layout: [\n            {\n              ...EVNTBOARD_SAMPLE_BUTTON,\n              id: 'first-btn',\n              slug: \"fart-btn\",\n              type: \"button\",\n              color: \"rgb(114,7,137)\",\n              text: \"Click me\",\n              column_start: 1,\n              column_end: 2,\n              row_start: 1,\n              row_end: 2,\n            },\n            {\n              ...EVNTBOARD_SAMPLE_BUTTON,\n              id: 'first-text',\n              slug: \"fart-text\",\n              type: \"text\",\n              color: \"rgb(114,7,0)\",\n              text: \"#\",\n              column_start: 1,\n              column_end: 2,\n              row_start: 1,\n              row_end: 2,\n            }\n          ]\n        }])\n      }\n\n      if (!tmpData) {\n        tmpData = setEvntBoardTmpData([])\n      }\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-init',\n        payload: newData,\n        emitter: event.emitter\n      })\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-init-tmp',\n        payload: tmpData,\n        emitter: event.emitter\n      })\n      break;\n    }\n\n      // BOARD\n    case \"evntboard-create\": {\n      const oldData = getEvntBoardData()\n\n      const newData = setEvntBoardData([\n        ...oldData,\n        {\n          ...SAMPLE_BOARD,\n          ...event.payload,\n        }\n      ])\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch',\n        payload: newData,\n        emitter: event.emitter\n      })\n      break;\n    }\n    case \"evntboard-update\": {\n      const oldData = getEvntBoardData()\n      const newData = setEvntBoardData([\n        ...oldData.filter((i) => i.id !== event.payload.id),\n        {\n          ...EVNTBOARD_SAMPLE_BOARD, // au cas ou !\n          ...event.payload\n        }\n      ])\n\n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch',\n        payload: newData,\n        emitter: event.emitter\n      })\n      break;\n    }\n    case \"evntboard-delete\": {\n      const oldData = getEvntBoardData()\n      const newData = setEvntBoardData(oldData.filter((i) => i.id !== event.payload.id))\n      \n      break;\n    }\n    case \"evntboard-tmp\": {\n      let evntboardCache = getEvntBoardTmpData()\n      if (!evntboardCache) {\n        evntboardCache = setEvntBoardTmpData([event.payload])\n      } else {\n        evntboardCache = setEvntBoardTmpData([\n          ...evntboardCache.filter((i) => i.slug !== event.payload.slug ),\n          {\n            ...evntboardCache.find((i) => i.slug === event.payload.slug),\n            ...event.payload\n          }\n        ])\n      }\n      \n      newEvent({\n        idParent: event.id,\n        name: 'evntboard-patch-tmp',\n        payload: evntboardCache,\n        emitter: event.emitter\n      })\n    }\n  }",
+  "codeError": null,
   "conditions": [
    {
-    "id": "1ed79a5a-f1c4-4676-806a-4ab52c34c580",
     "event": "evntboard-create",
-    "enable": true,
+    "enable": 1,
     "code": "true",
     "codeError": null
    },
    {
-    "id": "2ecccafc-229f-44eb-a84b-927f8ab2f4e8",
     "event": "evntboard-delete",
-    "enable": true,
+    "enable": 1,
     "code": "true",
     "codeError": null
    },
    {
-    "id": "8b1e8dd6-ab8f-4ee0-85d2-d60e61b30656",
     "event": "evntboard-start",
-    "enable": true,
+    "enable": 1,
     "code": "true",
     "codeError": null
    },
    {
-    "id": "bbe05c72-9367-4898-9dde-3a667336277f",
     "event": "evntboard-tmp",
-    "enable": true,
+    "enable": 1,
     "code": "true",
     "codeError": null
    },
    {
-    "id": "5bea7a0a-2f5d-4366-932d-a345cb6a053f",
     "event": "evntboard-update",
-    "enable": true,
+    "enable": 1,
     "code": "true",
+    "codeError": null
+   }
+  ],
+  "entity": "trigger"
+ },
+ {
+  "id": "265af55b-4ac9-4c97-a835-1fc434a23f18",
+  "name": "/board/btn_example",
+  "enable": 1,
+  "type": "classic",
+  "locker": null,
+  "code": "debug('Hello from board')\n\nconst fartCount = temp.set('fart-count', (temp.get('fart-count') || 0) + 1)\n\n// change btn text :)\nnewEvent({\n  idParent: event.id,\n  name: 'evntboard-tmp',\n  payload: {\n    slug: 'fart-text',\n    text: `${fartCount}`,\n  },\n})",
+  "codeError": null,
+  "conditions": [
+   {
+    "event": "evntboard-click",
+    "enable": 1,
+    "code": "event.payload.slug === 'fart-btn'",
     "codeError": null
    }
   ],
