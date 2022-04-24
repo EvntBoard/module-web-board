@@ -32,9 +32,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p ./build/triggers
-          mkdir -p ./build/module-board
+          mkdir -p ./build/module-web-board
           mv -v ./triggers/* ./build/triggers
-          mv -v ./dist/* ./build/module-board
+          mv -v ./dist/* ./build/module-web-board
 
       - name: Pack
         shell: bash
