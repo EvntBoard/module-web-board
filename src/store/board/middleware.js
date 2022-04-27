@@ -21,7 +21,7 @@ const middleware = (store) =>  {
   );
 
   serverAndClient.addMethod('connected', async ({ id }) => {
-    serverAndClient.notify('session.register', { name: 'Module Web Board' })
+    serverAndClient.notify('session.register', { name: 'module-web-board' })
     store.dispatch(actions.wsOnOpen(id))
 
     await serverAndClient.request('events.subscribe', [
